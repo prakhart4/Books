@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
 import { PrismaClient } from "@prisma/client";
-const prisma = new PrismaClient();
+import { userRouter } from "./routes/users";
+export const prisma = new PrismaClient();
 
 async function main() {
   const app = express();
@@ -25,14 +26,11 @@ async function main() {
   });
 
   //routes
-  app.get("/users", async (req, res) => {
-    const users = await prisma.user.findMany();
-    res.send(users);
-  });
+  app.use("/api/user", userRouter);
 
-  app.get("/", async (req, res) => {
-    res.send("Hello, Express!");
-  });
+  // app.get("/", async (req, res) => {
+  //   res.send("Hello, Express!");
+  // });
 
   //start server
   app.listen(port, () => {
@@ -48,3 +46,5 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+
+// export const prismaClient = prisma;
