@@ -31,7 +31,7 @@ const themeCreator = () =>
         },
         styleOverrides: {
           root: {
-            borderRadius: 20,
+            borderRadius: 0,
             //   backgroundColor:'#fff'
           },
         },
