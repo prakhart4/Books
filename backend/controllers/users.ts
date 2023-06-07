@@ -124,8 +124,11 @@ export const signInUser: RequestHandler = async (req, res) => {
       expiresIn: "3d",
     });
 
+    //remove password from response
+    const { password: _, ...rest } = user;
+
     //return token
-    res.json({ email, token });
+    res.json({ user: rest, token });
   } catch (error) {
     //return error
     res.status(500).json({ message: "Login failed", error });

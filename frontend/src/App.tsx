@@ -1,35 +1,43 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import * as React from "react";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+// import { fakeAuthProvider } from "./auth";
+import { AuthProvider, useAuth } from "./provider/authProvider";
+import { Box, Typography } from "@mui/material";
+import { SignIn } from "./pages/SignIn";
+import PublicPage from "./pages/PublicPage";
+import PrivatePage from "./pages/PrivatePage";
+import { Layout } from "./components/Layout";
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <AuthProvider>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<PublicPage />} />
+            <Route path="/login" element={<SignIn />} />
+            <Route
+              path="/protected"
+              element={
+                <RequireAuth>
+                  <PrivatePage />
+                </RequireAuth>
+              }
+            />
+          </Route>
+        </Routes>
+      </AuthProvider>
     </>
-  )
+  );
 }
 
-export default App
+function RequireAuth({ children }: { children: JSX.Element }) {
+  const auth = useAuth();
+  const location = useLocation();
+
+  if (!auth.currentUser) {
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return children;
+}
