@@ -87,7 +87,7 @@ const themeCreator = () =>
         main: "#131921",
       },
       secondary: {
-        main: "#000",
+        main: "#222F3E",
       },
       // neutral: {
       //   main:'#fff8',

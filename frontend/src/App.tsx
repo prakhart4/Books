@@ -12,14 +12,18 @@ import themeCreator from "./theme";
 const theme = themeCreator();
 
 export default function App() {
+  const [currentCategory, setCurrentCategory] = React.useState("All");
   return (
     <>
       <CssBaseline />
       <ThemeProvider theme={theme}>
         <AuthProvider>
           <Routes>
-            <Route element={<Layout />}>
-              <Route path="/" element={<PublicPage />} />
+            <Route element={<Layout setCurrentCategory={setCurrentCategory} />}>
+              <Route
+                path="/"
+                element={<PublicPage currentCategory={currentCategory} />}
+              />
               <Route path="/login" element={<SignIn />} />
               <Route
                 path="/protected"

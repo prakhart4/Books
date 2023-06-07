@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
-import { AuthStatus } from "./AuthStatus";
+import SubToolbar from "./SubToolbar";
 import { AppBar, Button, Toolbar } from "@mui/material";
 
 import { styled, alpha } from "@mui/material/styles";
@@ -48,7 +48,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export function Layout() {
+interface Props {
+  setCurrentCategory: (category: string) => void;
+}
+
+export function Layout({ setCurrentCategory }: Props) {
   const navigate = useNavigate();
   const auth = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -177,10 +181,11 @@ export function Layout() {
       <AppBar position="static">
         <Toolbar>
           <Typography
+            onClick={() => navigate("/")}
             variant="h6"
             noWrap
             component="div"
-            sx={{ display: { xs: "none", sm: "block" } }}
+            sx={{ display: { xs: "none", sm: "block", cursor: "pointer" } }}
           >
             Books
           </Typography>
@@ -255,16 +260,7 @@ export function Layout() {
       </AppBar>
       {renderMobileMenu}
       {renderMenu}
-      <AuthStatus />
-
-      <ul>
-        <li>
-          <Link to="/">Public Page</Link>
-        </li>
-        <li>
-          <Link to="/protected">Protected Page</Link>
-        </li>
-      </ul>
+      <SubToolbar setCurrentCategory={setCurrentCategory} />
 
       <Outlet />
     </div>
