@@ -49,10 +49,10 @@ export default function App() {
 }
 
 function RequireAuth({ children }: { children: JSX.Element }) {
-  const auth = useAuth();
+  const { currentUser, loading } = useAuth();
   const location = useLocation();
 
-  if (!auth.currentUser) {
+  if (!currentUser && !loading) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 

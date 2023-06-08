@@ -103,7 +103,7 @@ export function Layout({ setCurrentCategory }: Props) {
       >
         Sign Out
       </MenuItem>
-      <MenuItem component={Link} to={"/orders"}>
+      <MenuItem component={Link} to={"/orders"} onClick={handleMenuClose}>
         My orders
       </MenuItem>
     </Menu>
@@ -243,7 +243,10 @@ export function Layout({ setCurrentCategory }: Props) {
               size="large"
               color="inherit"
             >
-              <Badge badgeContent={0} color="error">
+              <Badge
+                badgeContent={auth.currentUser?.ownedBooks?.length ?? 0}
+                color="error"
+              >
                 <Book />
               </Badge>
             </IconButton>

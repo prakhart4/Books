@@ -17,6 +17,10 @@ export const getUser: RequestHandler = async (req, res) => {
   //find user
   const user = await prisma.user.findUnique({
     where: { id: userId },
+    include: {
+      ownedBooks: true,
+      Order: true,
+    },
   });
 
   if (!user) {
@@ -66,6 +70,10 @@ export const signupUser: RequestHandler = async (req, res) => {
         password: hashedPassword,
         credit: 100,
       },
+      include: {
+        ownedBooks: true,
+        Order: true,
+      },
     });
 
     //generate a JWT
@@ -102,6 +110,10 @@ export const signInUser: RequestHandler = async (req, res) => {
       where: {
         email,
       },
+      include: {
+        ownedBooks: true,
+        Order: true,
+      },
     });
 
     //check if user exists
@@ -134,6 +146,99 @@ export const signInUser: RequestHandler = async (req, res) => {
     //return error
     res.status(500).json({ message: "Login failed", error });
   }
+};
+
+//get Orders
+export const getOrders: RequestHandler = async (req, res) => {
+  const { userId } = req.body;
+
+  //check if user exists
+  if (!userId) {
+    return res.status(400).json({
+      message: "User not found",
+    });
+  }
+
+  //find user
+  const orders = await prisma.order.findMany({
+    where: {
+      userId,
+    },
+    include: {
+      book: true,
+    },
+  });
+
+  if (!orders) {
+    return res.status(400).json({
+      message: "User not found",
+    });
+  }
+
+  res.json(orders);
+};
+
+//Cancel Order
+export const cancelOrder: RequestHandler = async (req, res) => {
+  const { userId } = req.body;
+  const { orderId } = req.params;
+
+  //check if user exists
+  if (!orderId || !userId) {
+    return res.status(400).json({
+      message: "id not found",
+    });
+  }
+
+  //find user
+  const order = await prisma.order.findUnique({
+    where: {
+      id: parseInt(orderId),
+    },
+  });
+
+  if (!order) {
+    return res.status(400).json({
+      message: "Order not found",
+    });
+  }
+
+  //check if user is owner of order
+  if (order.userId !== userId) {
+    return res.status(400).json({
+      message: "User is not owner of this order",
+    });
+  }
+
+  //update user credit and remove book
+  const user = await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      credit: {
+        increment: order.point,
+      },
+      ownedBooks: {
+        disconnect: {
+          id: order.bookId,
+        },
+      },
+    },
+    include: {
+      ownedBooks: true,
+      Order: true,
+    },
+  });
+
+  //delete order
+  await prisma.order.delete({
+    where: {
+      id: parseInt(orderId),
+    },
+  });
+
+  res.json(user);
 };
 
 //delete all user

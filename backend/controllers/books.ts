@@ -34,3 +34,51 @@ export const deleteAllBooks: RequestHandler = async (req, res) => {
 
   res.json({ message: "All books deleted" });
 };
+
+//buy book
+export const buyBook: RequestHandler = async (req, res) => {
+  if (req.body.bookId === undefined) {
+    res.status(400).json({ message: "Missing bookId" });
+  }
+
+  try {
+    //fetch book
+    const book = await prisma.book.findUnique({
+      where: {
+        id: parseInt(req.body.bookId),
+      },
+    });
+    if (!book) {
+      res.status(400).json({ message: "Book not found" });
+      return;
+    }
+    const price = book.point;
+    //check if user has enough credit
+    const preUser = await prisma.user.findUnique({
+      where: {
+        id: req.body.userId,
+      },
+    });
+
+    if ((preUser?.credit ?? 0) < price) {
+      res.status(400).json({ message: "Not enough credit" });
+      return;
+    }
+
+    const user = await prisma.user.update({
+      where: {
+        id: req.body.userId,
+      },
+      data: {
+        credit: { decrement: price },
+        ownedBooks: { connect: { id: book.id } },
+        Order: { create: { bookId: book.id, point: book.point } },
+      },
+      include: { ownedBooks: true, Order: true },
+    });
+    res.json(user);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
+};

@@ -20,7 +20,7 @@ export const authenticateToken: RequestHandler = (req, res, next) => {
       return res.status(403).json({ message: "Invalid token" });
     }
 
-    req.body = { userId: decoded.userId };
+    req.body = { ...req.body, userId: decoded.userId };
     next();
   });
 };

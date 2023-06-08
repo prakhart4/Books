@@ -4,8 +4,20 @@ import React, {
   ReactElement,
   createContext,
   useContext,
+  useEffect,
+  useMemo,
   useState,
 } from "react";
+import { Book } from "../pages/PublicPage";
+
+export type Order = {
+  id: number;
+  createdOn: string;
+  userId: string;
+  bookId: number;
+  book: Book;
+  point: number;
+};
 
 export interface user {
   id: string;
@@ -13,10 +25,12 @@ export interface user {
   email: string;
   password: string;
   credit: number;
-  ownedBooks: string[];
+  ownedBooks: Book[];
+  Order: Order[];
 }
 
 interface IWrapper {
+  loading: boolean;
   currentUser?: user;
   logOut: (callback: () => void) => Promise<void>;
   signInEmailPassword: (email: string, password: string) => Promise<string>;
@@ -33,12 +47,40 @@ const AuthContext = createContext<IWrapper | null>(null);
 export const AuthProvider: React.FC<PropsWithChildren<any>> = ({
   children,
 }) => {
-  const [currentUser, setCurrentUser] = useState(undefined);
-  const [token, setToken] = useState("");
+  const [currentUser, setCurrentUser] = useState<user>();
+  const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState(
+    localStorage.getItem("token") ?? undefined
+  );
 
   const api = axios.create({
     baseURL: "http://localhost:3000/api",
   });
+
+  const saveToken = (newToken: string) => {
+    localStorage.setItem("token", newToken);
+  };
+
+  const getUser = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get("user/");
+      setLoading(false);
+      setCurrentUser(response.data);
+      console.log("user updated", response);
+    } catch (error: any) {
+      console.error(error);
+      alert(`Failed to log in! ${error.response.data.message}.`);
+      throw error.response.data;
+    }
+  };
+
+  useEffect(() => {
+    if (!token) return;
+    saveToken(token);
+
+    getUser();
+  }, [token]);
 
   // Add a request interceptor
   api.interceptors.request.use((config) => {
@@ -49,11 +91,27 @@ export const AuthProvider: React.FC<PropsWithChildren<any>> = ({
     return config;
   });
 
+  // Add a response interceptor
+  api.interceptors.response.use((response) => {
+    // check user
+    // console.log(response);
+    if (
+      currentUser?.id &&
+      response.data.id &&
+      response.data.id === currentUser?.id
+    ) {
+      console.log("user updated");
+      setCurrentUser(response.data);
+    }
+    return response;
+  });
+
   //sign in with email and password
   async function signInEmailPassword(email: string, password: string) {
     try {
       const response = await api.post("user/signIn", { email, password });
       setToken(response.data.token);
+      saveToken(response.data.token);
       setCurrentUser(response.data.user);
 
       return "User logged in successfully";
@@ -78,6 +136,8 @@ export const AuthProvider: React.FC<PropsWithChildren<any>> = ({
       });
 
       setToken(response.data.token);
+      saveToken(response.data.token);
+
       setCurrentUser(response.data.user);
 
       return "User created successfully";
@@ -97,6 +157,7 @@ export const AuthProvider: React.FC<PropsWithChildren<any>> = ({
       setToken("");
       console.log("Logged out");
       setCurrentUser(undefined);
+      localStorage.removeItem("token");
       callback();
     } catch (err: any) {
       alert(`Failed Logout! ${err?.error}.`);
@@ -105,6 +166,7 @@ export const AuthProvider: React.FC<PropsWithChildren<any>> = ({
   }
 
   const wrapped = {
+    loading,
     currentUser,
     signUpEmailPassword,
     signInEmailPassword,
