@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 import React, {
   PropsWithChildren,
   ReactElement,
@@ -7,11 +7,14 @@ import React, {
   useState,
 } from "react";
 
-type user = {
+export interface user {
+  id: string;
+  name?: string | null;
   email: string;
-  name: string;
-  token: string;
-};
+  password: string;
+  credit: number;
+  ownedBooks: string[];
+}
 
 interface IWrapper {
   currentUser?: user;
@@ -22,6 +25,7 @@ interface IWrapper {
     password: string,
     name: string
   ) => Promise<string>;
+  api: AxiosInstance;
 }
 
 const AuthContext = createContext<IWrapper | null>(null);
@@ -32,20 +36,30 @@ export const AuthProvider: React.FC<PropsWithChildren<any>> = ({
   const [currentUser, setCurrentUser] = useState(undefined);
   const [token, setToken] = useState("");
 
-  const auth = axios.create({
+  const api = axios.create({
     baseURL: "http://localhost:3000/api",
+  });
+
+  // Add a request interceptor
+  api.interceptors.request.use((config) => {
+    if (token === "") {
+      return config;
+    }
+    config.headers.Authorization = `Bearer ${token}`;
+    return config;
   });
 
   //sign in with email and password
   async function signInEmailPassword(email: string, password: string) {
     try {
-      const response = await auth.post("user/signIn", { email, password });
+      const response = await api.post("user/signIn", { email, password });
       setToken(response.data.token);
       setCurrentUser(response.data.user);
 
       return "User logged in successfully";
     } catch (error: any) {
-      console.log(`Failed to log in! ${error}.`);
+      console.error(error);
+      alert(`Failed to log in! ${error.response.data.message}.`);
       throw error.response.data;
     }
   }
@@ -57,7 +71,7 @@ export const AuthProvider: React.FC<PropsWithChildren<any>> = ({
     name: string
   ) {
     try {
-      const response = await auth.post("user/signUp", {
+      const response = await api.post("user/signUp", {
         email,
         password,
         name,
@@ -68,7 +82,9 @@ export const AuthProvider: React.FC<PropsWithChildren<any>> = ({
 
       return "User created successfully";
     } catch (error: any) {
-      console.log(`Failed to sign up! ${error}.`);
+      console.error(error);
+
+      alert(`Failed to sign up! ${error.response.data.message}.`);
       throw error.response.data;
     }
   }
@@ -93,6 +109,7 @@ export const AuthProvider: React.FC<PropsWithChildren<any>> = ({
     signUpEmailPassword,
     signInEmailPassword,
     logOut,
+    api,
   };
 
   return (

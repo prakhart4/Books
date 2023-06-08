@@ -8,6 +8,10 @@ import PublicPage from "./pages/PublicPage";
 import PrivatePage from "./pages/PrivatePage";
 import { Layout } from "./components/Layout";
 import themeCreator from "./theme";
+import BookPage from "./pages/BookPage";
+import SignUp from "./pages/Signup";
+import MyBooks from "./pages/MyBooks";
+import Orders from "./pages/Orders";
 
 const theme = themeCreator();
 
@@ -25,11 +29,14 @@ export default function App() {
                 element={<PublicPage currentCategory={currentCategory} />}
               />
               <Route path="/login" element={<SignIn />} />
+              <Route path="/signUp" element={<SignUp />} />
+              <Route path="/orders" element={<Orders />} />
+              <Route path="/book/:id" element={<BookPage />} />
               <Route
-                path="/protected"
+                path="/myBooks"
                 element={
                   <RequireAuth>
-                    <PrivatePage />
+                    <MyBooks />
                   </RequireAuth>
                 }
               />

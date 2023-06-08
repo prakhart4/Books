@@ -16,7 +16,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useAuth } from "../provider/authProvider";
-import { BookSharp } from "@mui/icons-material";
+import { Book, BookSharp } from "@mui/icons-material";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -103,7 +103,9 @@ export function Layout({ setCurrentCategory }: Props) {
       >
         Sign Out
       </MenuItem>
-      {/* <MenuItem onClick={handleMenuClose}>My account</MenuItem> */}
+      <MenuItem component={Link} to={"/orders"}>
+        My orders
+      </MenuItem>
     </Menu>
   );
 
@@ -149,18 +151,6 @@ export function Layout({ setCurrentCategory }: Props) {
           <Typography variant="body1">Login</Typography>
         </MenuItem>
       )}
-      <MenuItem>
-        <IconButton
-          size="large"
-          aria-label="show 17 new notifications"
-          color="inherit"
-        >
-          <Badge badgeContent={0} color="error">
-            <ShoppingCartIcon />
-          </Badge>
-        </IconButton>
-        <Typography variant="body1">Cart</Typography>
-      </MenuItem>
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           size="large"
@@ -212,7 +202,12 @@ export function Layout({ setCurrentCategory }: Props) {
             </Typography>
             {auth.currentUser ? (
               // My Books
-              <Button sx={{ paddingY: 0 }} color="inherit">
+              <Button
+                sx={{ paddingY: 0 }}
+                color="inherit"
+                component={Link}
+                to={"/myBooks"}
+              >
                 <Typography variant="body1">My Books</Typography>
               </Button>
             ) : (
@@ -231,16 +226,25 @@ export function Layout({ setCurrentCategory }: Props) {
           <Box sx={{ display: { xs: "none", md: "flex" } }}>
             <IconButton
               size="large"
-              aria-label="account of current user"
-              aria-haspopup="true"
               color="inherit"
               onClick={handleProfileMenuOpen}
             >
-              <AccountCircle />
+              <Badge
+                max={1000}
+                badgeContent={auth.currentUser?.credit ?? 0}
+                color="error"
+              >
+                <AccountCircle />
+              </Badge>
             </IconButton>
-            <IconButton size="large" color="inherit">
+            <IconButton
+              component={Link}
+              to={"/myBooks"}
+              size="large"
+              color="inherit"
+            >
               <Badge badgeContent={0} color="error">
-                <ShoppingCartIcon />
+                <Book />
               </Badge>
             </IconButton>
           </Box>

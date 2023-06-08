@@ -1,7 +1,7 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import React from "react";
 import { useAuth } from "../provider/authProvider";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 type Props = any; //{}
 
@@ -13,10 +13,10 @@ export const SignIn = (props: Props) => {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   return (
-    <div>
+    <Container>
       <Box>
-        <Typography variant="h6" gutterBottom>
-          hi from login page
+        <Typography variant="h5" gutterBottom>
+          Login
         </Typography>
       </Box>
 
@@ -28,24 +28,42 @@ export const SignIn = (props: Props) => {
             .then(() => navigate(from, { replace: true }));
         }}
       >
-        <label>
-          email:{" "}
-          <input
-            name="email"
-            type="email"
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </label>{" "}
-        <label>
-          pass:{" "}
-          <input
-            name="email"
-            type="password"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </label>{" "}
-        <button type="submit">Login</button>
+        <TextField
+          sx={{ mt: 4 }}
+          label="Email"
+          variant="outlined"
+          type="email"
+          fullWidth
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <TextField
+          sx={{ mt: 4 }}
+          label="Password"
+          variant="outlined"
+          fullWidth
+          type="password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <Button
+          sx={{ mt: 4 }}
+          color="secondary"
+          fullWidth
+          variant="contained"
+          type="submit"
+        >
+          Login
+        </Button>
       </form>
-    </div>
+      <Button
+        sx={{ mt: 2 }}
+        component={Link}
+        to={"/signUp"}
+        fullWidth
+        variant="contained"
+        type="submit"
+      >
+        Sign up
+      </Button>
+    </Container>
   );
 };

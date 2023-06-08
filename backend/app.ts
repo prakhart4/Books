@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import { PrismaClient } from "@prisma/client";
 import { userRouter } from "./routes/users";
+import { bookRouter } from "./routes/books";
 export const prisma = new PrismaClient();
 
 async function main() {
@@ -27,6 +28,7 @@ async function main() {
 
   //routes
   app.use("/api/user", userRouter);
+  app.use("/api/book", bookRouter);
 
   // app.get("/", async (req, res) => {
   //   res.send("Hello, Express!");

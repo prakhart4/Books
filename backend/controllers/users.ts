@@ -64,6 +64,7 @@ export const signupUser: RequestHandler = async (req, res) => {
         name,
         email,
         password: hashedPassword,
+        credit: 100,
       },
     });
 
@@ -74,7 +75,7 @@ export const signupUser: RequestHandler = async (req, res) => {
 
     //return email and token
     res.status(201).json({
-      email,
+      user,
       token,
     });
   } catch (error: any) {
