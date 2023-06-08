@@ -142,9 +142,19 @@ export function Layout({ setCurrentCategory, handleSearch }: Props) {
       </Box>
 
       {auth.currentUser ? (
-        <MenuItem sx={{ TextAlign: "center" }}>
+        <MenuItem
+          sx={{ TextAlign: "center" }}
+          onClick={handleMenuClose}
+          component={Link}
+          to={"/myBooks"}
+        >
           <IconButton>
-            <BookSharp />
+            <Badge
+              badgeContent={auth.currentUser?.ownedBooks?.length ?? 0}
+              color="error"
+            >
+              <BookSharp />
+            </Badge>
           </IconButton>
           <Typography variant="body1">My Books</Typography>
         </MenuItem>
@@ -153,6 +163,7 @@ export function Layout({ setCurrentCategory, handleSearch }: Props) {
           <Typography variant="body1">Login</Typography>
         </MenuItem>
       )}
+
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
           size="large"
@@ -161,7 +172,13 @@ export function Layout({ setCurrentCategory, handleSearch }: Props) {
           aria-haspopup="true"
           color="inherit"
         >
-          <AccountCircle />
+          <Badge
+            max={1000}
+            badgeContent={auth.currentUser?.credit ?? 0}
+            color="error"
+          >
+            <AccountCircle />
+          </Badge>
         </IconButton>
         <Typography variant="body1">Profile</Typography>
       </MenuItem>
