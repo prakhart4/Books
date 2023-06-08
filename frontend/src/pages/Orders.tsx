@@ -16,10 +16,17 @@ import { Order, useAuth } from "../provider/authProvider";
 
 // type Props = any;
 
-export default function Orders() {
-  const { currentUser, api } = useAuth();
-  const [orders, setOrders] = useState<Order[]>();
+function OrderRow({
+  index,
+  order,
+  arr,
+}: {
+  index: number;
+  order: Order;
+  arr: Order[];
+}) {
   const [open, setOpen] = useState(false);
+  const { api } = useAuth();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -36,6 +43,49 @@ export default function Orders() {
       }
     );
   };
+
+  return (
+    <Fragment key={index}>
+      <ListItem>
+        <ListItemText
+          primary={new Date(order.createdOn).toDateString()}
+          secondary={
+            <>
+              <Typography>{order?.book?.title ?? ""}</Typography>
+              <Typography color={"#B12704"}>{order?.point} points</Typography>
+            </>
+          }
+        />
+        <Button variant="contained" color="primary" onClick={handleOpen}>
+          Cancel
+        </Button>
+      </ListItem>
+      {arr?.length - 1 !== index && <Divider />}
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          <Typography variant="body1">
+            {`Cancel order of ${order?.book?.title} for ${order?.point} points`}
+          </Typography>
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={() => handleCancel(order.id)} autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Fragment>
+  );
+}
+
+export default function Orders() {
+  const { currentUser, api } = useAuth();
+  const [orders, setOrders] = useState<Order[]>();
 
   useEffect(() => {
     //Fetch orders
@@ -55,43 +105,7 @@ export default function Orders() {
       <h1>Orders</h1>
       <List>
         {(orders ? orders : currentUser?.Order)?.map((order, index, arr) => (
-          <Fragment key={index}>
-            <ListItem>
-              <ListItemText
-                primary={new Date(order.createdOn).toDateString()}
-                secondary={
-                  <>
-                    <Typography>{order?.book?.title ?? ""}</Typography>
-                    <Typography color={"#B12704"}>
-                      {order?.point} points
-                    </Typography>
-                  </>
-                }
-              />
-              <Button variant="contained" color="primary" onClick={handleOpen}>
-                Cancel
-              </Button>
-            </ListItem>
-            {arr?.length - 1 !== index && <Divider />}
-            <Dialog
-              open={open}
-              onClose={handleClose}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">
-                <Typography variant="body1">
-                  {`Cancel order of ${order?.book?.title} for ${order?.point} points`}
-                </Typography>
-              </DialogTitle>
-              <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button onClick={() => handleCancel(order.id)} autoFocus>
-                  Yes
-                </Button>
-              </DialogActions>
-            </Dialog>
-          </Fragment>
+          <OrderRow index={index} order={order} arr={arr} />
         ))}
       </List>
     </Container>
