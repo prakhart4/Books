@@ -54,7 +54,7 @@ export const AuthProvider: React.FC<PropsWithChildren<any>> = ({
   );
 
   const api = axios.create({
-    baseURL: "http://localhost:3000/api",
+    baseURL: "https://books-re5z.onrender.com/api",
   });
 
   const saveToken = (newToken: string) => {
