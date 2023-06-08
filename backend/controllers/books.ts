@@ -53,15 +53,25 @@ export const buyBook: RequestHandler = async (req, res) => {
       return;
     }
     const price = book.point;
+
     //check if user has enough credit
     const preUser = await prisma.user.findUnique({
       where: {
         id: req.body.userId,
       },
+      include: {
+        ownedBooks: true,
+      },
     });
 
     if ((preUser?.credit ?? 0) < price) {
       res.status(400).json({ message: "Not enough credit" });
+      return;
+    }
+
+    //check if user already own book
+    if (preUser?.ownedBooks.some((book) => book.id === book.id)) {
+      res.status(400).json({ message: "User already owns this book" });
       return;
     }
 
