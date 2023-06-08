@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.ts",
   "scripts": {
-    "start": "node app.ts"
+    "start": "ts-node app.ts"
   },
   "author": "",
   "license": "ISC",
