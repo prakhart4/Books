@@ -94,9 +94,12 @@ export default function PublicPage({
           <Typography gutterBottom variant="body1" component="h2">
             {book.title}
           </Typography>
-          <Box display="flex" justifyContent="center" alignItems="center">
-            <Rating name="read-only" value={book.rating} readOnly />
-          </Box>
+          <Typography variant="body2" mb={2}>
+            by <b>{book?.writer}</b>
+          </Typography>
+          {/* <Box display="flex" justifyContent="center" alignItems="center"> */}
+          <Rating name="read-only" value={book.rating} readOnly />
+          {/* </Box> */}
           <Typography variant="body2" color="#B12704">
             {book.point} points
           </Typography>
