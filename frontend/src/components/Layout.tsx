@@ -16,7 +16,7 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import MoreIcon from "@mui/icons-material/MoreVert";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import { useAuth } from "../provider/authProvider";
-import { Book, BookSharp } from "@mui/icons-material";
+import { Book, BookSharp, Close } from "@mui/icons-material";
 
 const Search = styled("div")(({ theme }) => ({
   position: "relative",
@@ -50,14 +50,16 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 
 interface Props {
   setCurrentCategory: (category: string) => void;
+  handleSearch: (search: string) => void;
 }
 
-export function Layout({ setCurrentCategory }: Props) {
+export function Layout({ setCurrentCategory, handleSearch }: Props) {
   const navigate = useNavigate();
   const auth = useAuth();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [mobileMoreAnchorEl, setMobileMoreAnchorEl] =
     React.useState<null | HTMLElement>(null);
+  const [query, setQuery] = React.useState("");
 
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
@@ -182,12 +184,39 @@ export function Layout({ setCurrentCategory }: Props) {
           <Search sx={{ flexGrow: 1, display: "flex", mr: { md: 8 } }}>
             <StyledInputBase
               fullWidth
+              onKeyDown={(ev) => {
+                console.log(`Pressed keyCode ${ev.key}`);
+                if (ev.key === "Enter") {
+                  handleSearch(query);
+                  navigate("/");
+                  ev.preventDefault();
+                }
+              }}
+              onChange={(e) => {
+                setQuery(e.target.value);
+              }}
+              value={query}
               placeholder="Search…"
               inputProps={{ "aria-label": "search" }}
             />
-            <IconButton sx={{ marginX: 1 }}>
+            <IconButton
+              sx={{ marginX: 1 }}
+              onClick={() => handleSearch(query)}
+              component={Link}
+              to={"/"}
+            >
               <SearchIcon />
             </IconButton>
+            {query.length > 0 && (
+              <IconButton
+                onClick={() => {
+                  handleSearch("");
+                  setQuery("");
+                }}
+              >
+                <Close />
+              </IconButton>
+            )}
           </Search>
           <Box
             textAlign={"center"}

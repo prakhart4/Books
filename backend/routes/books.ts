@@ -5,6 +5,7 @@ import {
   deleteAllBooks,
   getBook,
   getBooks,
+  searchBooks,
 } from "../controllers/books";
 import { authenticateToken } from "../controllers/middleware";
 
@@ -15,6 +16,9 @@ bookRouter.get("/", getBooks);
 
 //create books
 bookRouter.post("/createBooks", createBook);
+
+//search books
+bookRouter.get("/search", searchBooks);
 
 //get book by id
 bookRouter.get("/:id", getBook);

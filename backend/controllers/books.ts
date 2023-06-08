@@ -1,5 +1,6 @@
 import { RequestHandler } from "express";
 import { prisma } from "../app";
+import { get } from "http";
 
 //add books
 export const createBook: RequestHandler = async (req, res) => {
@@ -12,7 +13,38 @@ export const createBook: RequestHandler = async (req, res) => {
 
 //get all books
 export const getBooks: RequestHandler = async (req, res) => {
-  const books = await prisma.book.findMany();
+  //get courser
+  const cursor = parseInt(req.query?.cursor?.toString() ?? "");
+  const category = req.query?.category?.toString();
+
+  const getCate = () => {
+    switch (category) {
+      case "fiction":
+        return "fiction";
+      case "nonFiction":
+        return "nonFiction";
+      case "science":
+        return "science";
+      case "essay":
+        return "essay";
+      default:
+        return undefined;
+    }
+  };
+
+  const enuCategory = getCate();
+
+  const books = await prisma.book.findMany({
+    take: 5,
+    ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
+    ...(enuCategory
+      ? {
+          where: {
+            tag: enuCategory,
+          },
+        }
+      : {}),
+  });
 
   res.json(books);
 };
@@ -30,9 +62,31 @@ export const getBook: RequestHandler = async (req, res) => {
 
 //delete all Books
 export const deleteAllBooks: RequestHandler = async (req, res) => {
-  await prisma.book.deleteMany({});
+  await prisma.book.deleteMany();
 
   res.json({ message: "All books deleted" });
+};
+
+//search all books
+export const searchBooks: RequestHandler = async (req, res) => {
+  console.log(req.query.query);
+  //check if query is empty
+
+  if (req.query?.query === undefined) {
+    res.status(400).json({ message: "Missing query" });
+  }
+
+  try {
+    const books = await prisma.book.findMany({
+      where: {
+        title: { search: req.query.query?.toString() },
+      },
+    });
+    res.json(books);
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Something went wrong" });
+  }
 };
 
 //buy book
@@ -70,7 +124,7 @@ export const buyBook: RequestHandler = async (req, res) => {
     }
 
     //check if user already own book
-    if (preUser?.ownedBooks.some((book) => book.id === book.id)) {
+    if (preUser?.ownedBooks.some((ownedBook) => ownedBook.id === book.id)) {
       res.status(400).json({ message: "User already owns this book" });
       return;
     }

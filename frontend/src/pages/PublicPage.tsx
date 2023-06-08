@@ -16,6 +16,8 @@ import { useNavigate } from "react-router-dom";
 
 type Props = {
   currentCategory: string;
+  getBooks: (value?: string, cursor?: number) => void;
+  books: Book[];
 }; //{}
 
 const getCategoryText = (currentCategory: string | undefined) => {
@@ -48,13 +50,17 @@ export type Book = {
   userId?: string | null;
 };
 
-export default function PublicPage({ currentCategory }: Props) {
+export default function PublicPage({
+  currentCategory,
+  getBooks,
+  books: Books,
+}: Props) {
   const observer = useRef<any>();
   const auth = useAuth();
-  const [Books, setBooks] = useState<Book[]>([]);
+  // const [Books, setBooks] = useState<Book[]>([]);
   const navigate = useNavigate();
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  // const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const BookCard = ({ book }: { book: Book }) => {
     return (
@@ -84,6 +90,7 @@ export default function PublicPage({ currentCategory }: Props) {
             },
           }}
         >
+          <Typography variant="caption">{getCategoryText(book.tag)}</Typography>
           <Typography gutterBottom variant="body1" component="h2">
             {book.title}
           </Typography>
@@ -99,33 +106,27 @@ export default function PublicPage({ currentCategory }: Props) {
   };
 
   const lastBookElementRef: (instance: HTMLDivElement | null) => void =
-    useCallback((node) => {
-      // if (loading) return
-      if (observer.current) observer.current.disconnect();
-      observer.current = new IntersectionObserver((entries) => {
-        if (entries[0].isIntersecting) {
-          console.log("Load more");
-          // setPageNumber((prevPageNumber) => prevPageNumber + 1);
-        }
-      });
-      if (node) observer.current.observe(node);
-    }, []);
+    useCallback(
+      (node) => {
+        // if (loading) return
+        if (observer.current) observer.current.disconnect();
+        observer.current = new IntersectionObserver((entries) => {
+          // console.log(Books[Books.length - 1]);
+          if (entries[0].isIntersecting && Books[Books.length - 1]) {
+            console.log("Load more");
 
-  useEffect(() => {
-    auth.api.get("/book").then(
-      (res) => {
-        console.log(res);
-        setBooks(res.data);
+            getBooks(undefined, Books[Books.length - 1].id);
+            // setPageNumber((prevPageNumber) => prevPageNumber + 1);
+          }
+        });
+        if (node) observer.current.observe(node);
       },
-      (error) => {
-        console.log(error);
-      }
+      [Books]
     );
 
-    // return () => {
-    //   second
-    // }
-  }, [auth.currentUser]);
+  useEffect(() => {
+    getBooks();
+  }, [auth.currentUser, currentCategory]);
 
   return (
     <Container>
