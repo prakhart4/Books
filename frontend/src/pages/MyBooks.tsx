@@ -13,6 +13,7 @@ import {
   // MenuItem,
   Typography,
 } from "@mui/material";
+import { Fragment } from "react";
 import { Link } from "react-router-dom";
 
 // type Props = any;
@@ -24,8 +25,8 @@ export default function MyBooks() {
       <h1>My Books</h1>
       <List>
         {currentUser?.ownedBooks?.map((book, index) => (
-          <>
-            <ListItem key={index} component={Link} to={`/book/${book.id}`}>
+          <Fragment key={index}>
+            <ListItem component={Link} to={`/book/${book.id}`}>
               <ListItemAvatar>
                 <Avatar
                   imgProps={{ style: { objectFit: "contain" } }}
@@ -47,7 +48,7 @@ export default function MyBooks() {
               </Button> */}
             </ListItem>
             {currentUser?.ownedBooks?.length - 1 !== index && <Divider />}
-          </>
+          </Fragment>
         ))}
       </List>
     </Container>

@@ -32,7 +32,6 @@ export default function App() {
     console.log(cursor);
 
     if (cursor && cursor === prevCursor) return;
-    setPrevCursor(cursor);
 
     api
       .get(value ? `/book/search` : "/book", {
@@ -40,7 +39,9 @@ export default function App() {
       })
       .then(
         (res) => {
+          if (res.status !== 200) return;
           console.log(res);
+          setPrevCursor(cursor);
           if (cursor) setBooks((prevBooks) => [...prevBooks, ...res.data]);
           else setBooks(res.data);
         },

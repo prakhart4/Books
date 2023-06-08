@@ -45,14 +45,19 @@ function OrderRow({
   };
 
   return (
-    <Fragment key={index}>
+    <Fragment>
       <ListItem>
         <ListItemText
           primary={new Date(order.createdOn).toDateString()}
           secondary={
             <>
-              <Typography>{order?.book?.title ?? ""}</Typography>
-              <Typography color={"#B12704"}>{order?.point} points</Typography>
+              <Typography component={"span"}>
+                {order?.book?.title ?? ""}
+              </Typography>
+              <br />
+              <Typography component={"span"} color={"#B12704"}>
+                {order?.point} points
+              </Typography>
             </>
           }
         />
@@ -105,7 +110,7 @@ export default function Orders() {
       <h1>Orders</h1>
       <List>
         {(orders ? orders : currentUser?.Order)?.map((order, index, arr) => (
-          <OrderRow index={index} order={order} arr={arr} />
+          <OrderRow key={index} index={index} order={order} arr={arr} />
         ))}
       </List>
     </Container>
