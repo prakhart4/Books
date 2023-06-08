@@ -3,9 +3,9 @@ import React from "react";
 import { useAuth } from "../provider/authProvider";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-type Props = any; //{}
+// type Props = any; //{}
 
-export const SignIn = (props: Props) => {
+export const SignIn = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";

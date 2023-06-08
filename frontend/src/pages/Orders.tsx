@@ -7,16 +7,16 @@ import {
   Divider,
   List,
   ListItem,
-  ListItemButton,
+  // ListItemButton,
   ListItemText,
   Typography,
 } from "@mui/material";
-import React, { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Order, useAuth } from "../provider/authProvider";
 
-type Props = any;
+// type Props = any;
 
-export default function Orders(props: Props) {
+export default function Orders() {
   const { currentUser, api } = useAuth();
   const [orders, setOrders] = useState<Order[]>();
   const [open, setOpen] = useState(false);
@@ -26,7 +26,7 @@ export default function Orders(props: Props) {
 
   const handleCancel = (id: number) => {
     api.delete(`/user/cancel-order/${id}`).then(
-      (res) => {
+      () => {
         alert("Order cancelled");
         handleClose();
       },

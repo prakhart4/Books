@@ -1,11 +1,11 @@
 import * as React from "react";
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 // import { fakeAuthProvider } from "./auth";
-import { AuthProvider, useAuth } from "./provider/authProvider";
-import { Box, CssBaseline, ThemeProvider, Typography } from "@mui/material";
+import { useAuth } from "./provider/authProvider";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { SignIn } from "./pages/SignIn";
 import PublicPage, { Book } from "./pages/PublicPage";
-import PrivatePage from "./pages/PrivatePage";
+// import PrivatePage from "./pages/PrivatePage";
 import { Layout } from "./components/Layout";
 import themeCreator from "./theme";
 import BookPage from "./pages/BookPage";
@@ -19,7 +19,7 @@ export default function App() {
   const [currentCategory, setCurrentCategory] = React.useState("All");
   const { api } = useAuth();
   const [books, setBooks] = React.useState<Book[]>([]);
-  const [search, setSearch] = React.useState<string>();
+  // const [search, setSearch] = React.useState<string>();
   const [prevCursor, setPrevCursor] = React.useState<number>();
 
   const handleSearch = (value: string) => {

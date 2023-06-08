@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material/styles";
-import { PaletteMode } from "@mui/material";
+// import { PaletteMode } from "@mui/material";
 
 // Create a theme instance.
 const themeCreator = () =>

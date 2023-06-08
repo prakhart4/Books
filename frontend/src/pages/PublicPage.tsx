@@ -4,13 +4,13 @@ import {
   CardContent,
   CardMedia,
   Container,
-  Divider,
+  // Divider,
   Grid,
-  Menu,
+  // Menu,
   Rating,
   Typography,
 } from "@mui/material";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useAuth } from "../provider/authProvider";
 import { useNavigate } from "react-router-dom";
 

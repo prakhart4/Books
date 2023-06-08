@@ -1,7 +1,3 @@
-import React from "react";
-
-type Props = any; //{}
-
-export default function PrivatePage(props: Props) {
+export default function PrivatePage() {
   return <div>PrivatePage</div>;
 }

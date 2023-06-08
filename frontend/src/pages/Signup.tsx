@@ -3,9 +3,9 @@ import { useAuth } from "../provider/authProvider";
 import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-type Props = any; //{}
+// type Props = any; //{}
 
-export default function SignUp(props: Props) {
+export default function SignUp() {
   const auth = useAuth();
   const navigate = useNavigate();
   const location = useLocation();

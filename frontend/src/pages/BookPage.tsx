@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Book } from "./PublicPage";
 import { useAuth } from "../provider/authProvider";
 import {
@@ -10,14 +10,14 @@ import {
   DialogActions,
   DialogTitle,
   IconButton,
-  Modal,
+  // Modal,
   Rating,
   Typography,
 } from "@mui/material";
 import { ArrowBack } from "@mui/icons-material";
-import zIndex from "@mui/material/styles/zIndex";
+// import zIndex from "@mui/material/styles/zIndex";
 
-type Props = any;
+// type Props = any;
 
 const getCategoryText = (currentCategory: string | undefined) => {
   if (!currentCategory) return undefined;
@@ -37,7 +37,7 @@ const getCategoryText = (currentCategory: string | undefined) => {
   }
 };
 
-export default function BookPage(props: Props) {
+export default function BookPage() {
   const { id } = useParams();
   const { api } = useAuth();
   const [book, setBook] = React.useState<Book>();

@@ -1,23 +1,23 @@
-import React from "react";
+// import React from "react";
 import { useAuth } from "../provider/authProvider";
 import {
   Avatar,
-  Button,
+  // Button,
   Container,
   Divider,
   List,
   ListItem,
   ListItemAvatar,
   ListItemText,
-  Menu,
-  MenuItem,
+  // Menu,
+  // MenuItem,
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
-type Props = any;
+// type Props = any;
 
-export default function MyBooks(props: Props) {
+export default function MyBooks() {
   const { currentUser } = useAuth();
   return (
     <Container>
