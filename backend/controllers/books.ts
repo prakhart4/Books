@@ -62,9 +62,21 @@ export const getBook: RequestHandler = async (req, res) => {
 
 //delete all Books
 export const deleteAllBooks: RequestHandler = async (req, res) => {
-  await prisma.book.deleteMany();
+  //get api key from header
+  const apiKey = req.headers["x-api-key"];
 
-  res.json({ message: "All books deleted" });
+  //check if api key is valid
+  if (apiKey !== process.env.SECRET) {
+    //delete all books
+    res.status(401).json({ message: "Unauthorized" });
+  }
+  try {
+    await prisma.book.deleteMany();
+    res.json({ message: "All books deleted" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Something went wrong", error });
+  }
 };
 
 //search all books
@@ -124,7 +136,9 @@ export const buyBook: RequestHandler = async (req, res) => {
     }
 
     //check if user already own book
-    if (preUser?.ownedBooks.some((ownedBook) => ownedBook.id === book.id)) {
+    if (
+      preUser?.ownedBooks.some((ownedBook: any) => ownedBook.id === book.id)
+    ) {
       res.status(400).json({ message: "User already owns this book" });
       return;
     }

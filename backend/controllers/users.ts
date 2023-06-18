@@ -243,6 +243,20 @@ export const cancelOrder: RequestHandler = async (req, res) => {
 
 //delete all user
 export const deleteAllUsers: RequestHandler = async (req, res) => {
-  const users = await prisma.user.deleteMany();
-  res.json(users);
+  //get api key from header
+  const apiKey = req.headers["x-api-key"];
+  //check if api key is valid
+  if (apiKey !== process.env.SECRET!) {
+    return res.status(401).json({
+      message: "Unauthorized",
+    });
+  }
+
+  try {
+    //delete all users
+    const users = await prisma.user.deleteMany();
+    res.json({ message: "Delete successful", users });
+  } catch (error) {
+    res.status(500).json({ message: "Delete failed", error });
+  }
 };
